@@ -1,0 +1,37 @@
+name: Green Dots
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # 10 AM Argentina
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  green:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Configure Git
+        run: |
+          git config user.name "luciaaldana"
+          git config user.email "luciaaldanacastilo@gmail.com"
+
+      - name: Create random empty commits
+        run: |
+          RANDOM_COMMITS=$(( (RANDOM % 6) + 1 ))
+          echo "Creating $RANDOM_COMMITS commits"
+
+          for i in $(seq 1 "$RANDOM_COMMITS"); do
+            git commit --allow-empty -m "Green $i - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          done
+
+      - name: Push
+        run: |
+          git push
